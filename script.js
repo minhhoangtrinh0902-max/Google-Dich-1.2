@@ -1,66 +1,60 @@
-let timeout;
+let inp = document.getElementById("inp");
+let out = document.getElementById("out");
+let type = document.getElementById("type");
+let from = document.getElementById("from");
+let to = document.getElementById("to");
+
+let t;
 
 // 🔹 Auto dịch khi gõ
-document.getElementById("inputText").addEventListener("input", () => {
-  clearTimeout(timeout);
-  timeout = setTimeout(translateText, 500);
-});
+inp.oninput = () => {
+  clearTimeout(t);
+  t = setTimeout(run, 400);
+};
 
-// 🔹 Hàm dịch
-async function translateText() {
-  let text = document.getElementById("inputText").value;
-  let from = document.getElementById("from").value;
-  let to = document.getElementById("to").value;
+async function run() {
+  let text = inp.value.trim();
 
-  if (!text.trim()) {
-    document.getElementById("output").innerText = "";
+  if (!text) {
+    out.innerText = "";
+    type.innerText = "";
     return;
   }
 
+  // 🔹 Dịch
   try {
-    let res = await fetch(
-      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`
+    let r = await fetch(
+      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from.value}|${to.value}`
     );
-
-    let data = await res.json();
-
-    document.getElementById("output").innerText =
-      data.responseData.translatedText;
-
+    let d = await r.json();
+    out.innerText = d.responseData.translatedText;
   } catch {
-    document.getElementById("output").innerText = "Lỗi dịch!";
+    out.innerText = "Lỗi dịch!";
+  }
+
+  // 🔹 Loại từ (chỉ chuẩn với tiếng Anh)
+  try {
+    let r2 = await fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${text}`
+    );
+    let d2 = await r2.json();
+
+    let pos = d2[0].meanings[0].partOfSpeech;
+    type.innerText = "Loại từ: " + pos;
+  } catch {
+    type.innerText = "Loại từ: không rõ";
   }
 }
 
 // 🔹 Đổi ngôn ngữ
-function swapLang() {
-  let from = document.getElementById("from");
-  let to = document.getElementById("to");
-
-  let temp = from.value;
-  from.value = to.value;
-  to.value = temp;
-
-  translateText();
+function swap() {
+  [from.value, to.value] = [to.value, from.value];
+  run();
 }
 
-// 🔹 Hàm đọc chung
+// 🔹 Đọc
 function speak(text, lang) {
-  let speech = new SpeechSynthesisUtterance(text);
-  speech.lang = (lang === "vi") ? "vi-VN" : "en-US";
-  speechSynthesis.speak(speech);
-}
-
-// 🔹 Đọc gốc
-function speakInput() {
-  let text = document.getElementById("inputText").value;
-  let lang = document.getElementById("from").value;
-  speak(text, lang);
-}
-
-// 🔹 Đọc dịch
-function speakOutput() {
-  let text = document.getElementById("output").innerText;
-  let lang = document.getElementById("to").value;
-  speak(text, lang);
+  let s = new SpeechSynthesisUtterance(text);
+  s.lang = lang === "vi" ? "vi-VN" : "en-US";
+  speechSynthesis.speak(s);
 }
