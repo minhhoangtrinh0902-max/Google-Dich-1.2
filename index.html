@@ -1,43 +1,36 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Google Dịch 1.2</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Google Dịch 1.2</title>
 
-  <!-- link CSS -->
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>🌐 Google Dịch Pro</h1>
+<h2>🌐 Google Dịch Mini</h2>
 
-<div class="controls">
-  <select id="from">
-    <option value="en">Anh</option>
-    <option value="vi">Việt</option>
-  </select>
+<select id="from">
+  <option value="en">EN</option>
+  <option value="vi">VI</option>
+</select>
 
-  <button onclick="swapLang()">🔄</button>
+<button onclick="swap()">🔄</button>
 
-  <select id="to">
-    <option value="vi">Việt</option>
-    <option value="en">Anh</option>
-  </select>
-</div>
+<select id="to">
+  <option value="vi">VI</option>
+  <option value="en">EN</option>
+</select>
 
-<div class="container">
-  <textarea id="inputText" placeholder="Nhập văn bản..."></textarea>
-  <div class="output" id="output"></div>
-</div>
+<textarea id="inp" placeholder="Nhập từ hoặc câu..."></textarea>
 
-<div class="controls">
-  <button onclick="speakInput()">🔊 Đọc gốc</button>
-  <button onclick="speakOutput()">🔊 Đọc dịch</button>
-</div>
+<div id="out"></div>
+<div id="type"></div>
 
-<!-- link JS -->
+<button onclick="speak(inp.value,from.value)">🔊 Gốc</button>
+<button onclick="speak(out.innerText,to.value)">🔊 Dịch</button>
+
 <script src="script.js"></script>
 
 </body>
